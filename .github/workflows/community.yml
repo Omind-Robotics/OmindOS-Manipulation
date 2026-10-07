@@ -1,0 +1,128 @@
+name: Community verification
+on:
+  push:
+    branches: [main, community-v0.1, delivery-v0.1.1]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  simulation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements-community.txt
+      - run: python -m pip install -r requirements-community.txt
+      - run: python -m unittest community.test_contract community.test_api community.test_pitch community.test_dual7 community.test_rm75 community.test_navigation community.test_customer_api
+      - run: python -m community.verify
+      # Keep the separate legacy ROS2 transport fixture at its original 13 joints.
+      - run: python -m community.legacy_mobile_dual_pitch --headless --plan-output community-results/ros2-waist-playback.json
+      - run: python -m community.api_example
+      - run: python -m community.api quick_start --output community-results/api-cli.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: community-simulation
+          path: community-results/
+  ros2-transport:
+    needs: simulation
+    runs-on: ubuntu-22.04
+    container: ros:humble-ros-base
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: community-simulation
+          path: community-results/
+      - run: apt-get update -qq && apt-get install -y ros-humble-nav2-msgs ros-humble-control-msgs
+      - shell: bash
+        run: |
+          source /opt/ros/humble/setup.bash
+          python3 -m unittest community.test_contract
+          python3 -m community.ros2_verify --plan community-results/ros2-playback.json
+          python3 -m community.ros2_verify --plan community-results/ros2-waist-playback.json --output-dir community-results/ros2-waist
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: community-ros2
+          path: |
+            community-results/ros2/
+            community-results/ros2-waist/
+  navigation-runtime:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Load the immutable Navigation v0.1 runtime
+        shell: bash
+        run: |
+          curl -fL --retry 3 --max-time 240 https://github.com/maganrobotics-boop/OmindOS-Navigation-Community/releases/download/v0.1/omindos-navigation-v0.1-runtime-amd64.tar.gz -o /tmp/navigation.tar.gz
+          echo '9a2fbed8baeb53b33586c5f76674dead3a6b29d3973fe508f4928e3928f9f491  /tmp/navigation.tar.gz' | sha256sum -c -
+          docker load -i /tmp/navigation.tar.gz
+      - name: Exercise real goal, path, localization and velocity topics
+        shell: bash
+        run: |
+          mkdir -p community-results/navigation
+          timeout 120s docker run --rm --network none \
+            -v "$PWD:/community:ro" -v "$PWD/community-results/navigation:/artifacts" \
+            --entrypoint /bin/bash omindos/navigation:0.1 /community/examples/navigation_runtime.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: navigation-runtime
+          path: community-results/navigation/
+  mobile-integration:
+    needs: [simulation, navigation-runtime]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements-community.txt
+      - run: python -m pip install -r requirements-community.txt
+      - uses: actions/download-artifact@v4
+        with:
+          name: navigation-runtime
+          path: community-results/navigation/
+      - name: Validate actual navigation poses with the full RM75 assembly and plan the arms
+        run: python -m community.rm75_navigation --headless --navigation-log community-results/navigation/navigation-trace.json --output community-results/navigation-integration.json --plan-output community-results/navigation-integration-plan.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mobile-integration
+          path: community-results/navigation-integration*.json
+  release-v02:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [simulation, ros2-transport, navigation-runtime, mobile-integration]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: release-artifacts/
+      - name: Publish the verified 0.2 snapshot once
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          test "$(python3 -c 'from community import __version__; print(__version__)')" = '0.2'
+          if gh release view v0.2 >/dev/null 2>&1; then
+            echo 'v0.2 already exists; immutable release retained.'
+            exit 0
+          fi
+          zip -qr OmindOS-Manipulation-0.2-validation.zip release-artifacts
+          sha256sum OmindOS-Manipulation-0.2-validation.zip > SHA256SUMS-v0.2
+          gh release create v0.2 --target "$GITHUB_SHA" --title 'OmindOS Manipulation 0.2' \
+            --notes-file docs/RELEASE_v0.2.md OmindOS-Manipulation-0.2-validation.zip SHA256SUMS-v0.2
