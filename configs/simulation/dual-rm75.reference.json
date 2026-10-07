@@ -1,0 +1,16 @@
+{
+  "schema": "omindos.community.dual_rm75.v1",
+  "simulation_only": true,
+  "left": {
+    "model": "RM75-B",
+    "mount_m": [0.10, 0.10, 1.06],
+    "mount_rpy": [-1.5707963267948966, 0, 0],
+    "home_rad": [1.57, 1.30, -1.57, 1.10, 0.10, 0.50, 0]
+  },
+  "right": {
+    "model": "RM75-B",
+    "mount_m": [0.10, -0.10, 1.06],
+    "mount_rpy": [1.5707963267948966, 0, 0],
+    "home_rad": [-1.57, 1.30, 1.57, 1.10, -0.10, 0.50, 0]
+  }
+}

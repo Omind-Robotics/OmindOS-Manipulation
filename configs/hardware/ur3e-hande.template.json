@@ -1,0 +1,49 @@
+{
+  "schema": "omindos.ur3e.site-notes.v0.1",
+  "purpose": "Field worksheet only; not an executable motion configuration",
+  "robot": {
+    "model": "UR3e",
+    "serial_number": null,
+    "robot_ip": null,
+    "polyscope_version": null,
+    "external_control_version": null,
+    "calibration_file": null,
+    "calibration_checksum_verified": false,
+    "connection": "TCP/IP"
+  },
+  "host": {
+    "os_version": null,
+    "ros_distribution": null,
+    "host_ip": null,
+    "access_method": null
+  },
+  "gripper": {
+    "manufacturer": "Robotiq",
+    "model": "Hand-E",
+    "connection": null,
+    "driver_or_urcap_version": null,
+    "feedback_available": null,
+    "opening_unit": null,
+    "payload_kg": null,
+    "opening_calibration_record": null,
+    "tcp_report": "community-results/hardware/tcp-report.json"
+  },
+  "setup": {
+    "single_arm_side": null,
+    "joint_prefix": null,
+    "joint_state_topic": null,
+    "trajectory_action": null,
+    "tcp_xyz_m_rotation_vector_rad": null,
+    "tool_and_part_payload_kg": null,
+    "tool_and_part_center_of_gravity_m": null,
+    "fixture_and_obstacles_record": null
+  },
+  "task": {
+    "object_description": null,
+    "known_pick_pose_record": null,
+    "known_place_pose_record": null,
+    "onsite_operator": null,
+    "joint_motion_limits_record": null,
+    "first_trial_result": "not performed"
+  }
+}

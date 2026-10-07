@@ -1,0 +1,49 @@
+{
+  "schema": "omindos.mobile-dual-7dof-pitch.site-notes.v0.1",
+  "purpose": "Hardware worksheet only; not an executable robot model or motion configuration",
+  "upper_body_dof": 15,
+  "left_arm": {
+    "dof": 7,
+    "manufacturer": "RealMan / 睿尔曼",
+    "model": "RM75 series; exact flange variant pending confirmation",
+    "urdf_or_kinematic_parameters": "Simulation uses pinned official RM75-B model: community/models/realman_rm75/NOTICE.md",
+    "joint_names": null,
+    "joint_limits": null,
+    "mount_transform": null,
+    "driver_and_connection": null
+  },
+  "right_arm": {
+    "dof": 7,
+    "manufacturer": "RealMan / 睿尔曼",
+    "model": "RM75 series; exact flange variant pending confirmation",
+    "urdf_or_kinematic_parameters": "Simulation uses pinned official RM75-B model: community/models/realman_rm75/NOTICE.md",
+    "joint_names": null,
+    "joint_limits": null,
+    "mount_transform": null,
+    "driver_and_connection": null
+  },
+  "waist": {
+    "dof": 1,
+    "motion": "pitch",
+    "joint_name": null,
+    "pivot_and_axis_in_base_frame": null,
+    "encoder_zero_and_sign": null,
+    "limits_rad": null,
+    "driver_and_connection": null
+  },
+  "base": {
+    "reported_wheel_description": "万向轮",
+    "active_drive_or_passive_caster": null,
+    "driven_wheel_layout": null,
+    "kinematic_model": null,
+    "lateral_velocity_supported": null,
+    "driver_and_connection": null
+  },
+  "integration": {
+    "reference_15dof_kinematics_implemented": true,
+    "calibrated_hardware_model_implemented": false,
+    "fifteen_joint_trajectory_interface_implemented": false,
+    "physical_robot_verified": false,
+    "manufacturer_rm75_b_kinematics_implemented": true
+  }
+}

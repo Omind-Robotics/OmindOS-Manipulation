@@ -1,0 +1,13 @@
+{
+  "schema": "omindos.community.navigation_scene.v1",
+  "frame_id": "map",
+  "resolution": 0.15,
+  "origin": [-2.4, -3.6],
+  "width": 64,
+  "height": 48,
+  "start": [-1.0, -1.5, 0.0],
+  "goal": [4.8, 1.5, 0.0],
+  "obstacles": [
+    {"center_m": [1.8, 0.0, 0.8], "size_m": [1.0, 1.4, 1.6]}
+  ]
+}

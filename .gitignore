@@ -1,0 +1,12 @@
+/venv/
+/.idea/
+*.pyc
+.DS_Store
+
+/.venv/
+/community-results/
+/configs/hardware/local/
+
+/results/
+/dist/
+/build/
