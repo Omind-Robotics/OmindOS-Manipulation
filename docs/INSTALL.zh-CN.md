@@ -1,4 +1,7 @@
-# 安装与运行指南
+# 开发源码安装与运行指南
+
+本页仅供有私有开发仓读取权限的团队成员。客户请使用
+[公开发行仓的安装说明](https://github.com/maganrobotics-boop/OmindOS-Manipulation-Release)；完整运行 ZIP 不依赖旧 Community 仓。
 
 0.2 新增底盘导航、到达停稳门禁和双 RM75＋腰部联动，入口：`python -m community.rm75_navigation`。
 详见[导航联动指南](NAVIGATION_v0.2.zh-CN.md)和[0.2 发布说明](RELEASE_v0.2.md)。
@@ -25,8 +28,8 @@ WSL 或虚拟机尤其需要另行检查图形显示，不能直接视为已验�
 sudo apt-get update
 sudo apt-get install -y git python3.12-venv libgl1 libgomp1
 
-git clone --branch main --single-branch https://github.com/maganrobotics-boop/OmindOS-Manipulation-Community.git
-cd OmindOS-Manipulation-Community
+git clone --branch main --single-branch https://github.com/maganrobotics-boop/OmindOS-Manipulation.git
+cd OmindOS-Manipulation
 python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements-community.txt
@@ -65,7 +68,7 @@ API 默认始终使用无窗口计算；需要观看动画时运行相应示例�
 ## 每次重新进入
 
 ```bash
-cd OmindOS-Manipulation-Community
+cd OmindOS-Manipulation
 source .venv/bin/activate
 python -m community.api quick_start --output community-results/api-cli.json
 ```
@@ -75,24 +78,20 @@ python -m community.api quick_start --output community-results/api-cli.json
 
 ## 已有仓库升级
 
-先进入本地仓库目录，再执行 `git status`，自行保存尚未提交的程序或配置。
-旧克隆的目录可能仍名为 `urmanipulation`，仓库改名不会自动修改本地目录。
-以下命令适用于工作区干净的仓库，并将远程地址更新为新名称：
+旧 Community 与新开发仓采用不同历史基线。保留旧目录和自己的修改，不要直接改远程地址后合并，也不要强制覆盖。
+在旧目录执行 `git status` 并保存本地工作后，在旁边新建开发仓克隆：
 
 ```bash
-git remote set-url origin https://github.com/maganrobotics-boop/OmindOS-Manipulation-Community.git
-git fetch origin main
-git switch main
-git merge --ff-only FETCH_HEAD
-source .venv/bin/activate
-python -m pip install -r requirements-community.txt
-python -m community.verify
-python -m unittest community.test_contract community.test_api community.test_pitch community.test_dual7 community.test_rm75 community.test_navigation
+cd ..
+git clone --branch main --single-branch https://github.com/maganrobotics-boop/OmindOS-Manipulation.git OmindOS-Manipulation-dev
+cd OmindOS-Manipulation-dev
 ```
 
-若本地没有 `main`，在完成 `git fetch origin main` 后使用 `git switch -c main FETCH_HEAD`。
-若切换或快进失败，请先处理自己的分支与修改，不要强制覆盖。
-已发布的 `v0.1` 标签不会因升级主线而移动。保存 `git rev-parse HEAD` 的结果用于复现。
+然后按上方“全新安装”创建虚拟环境和安装依赖。逐项迁移自己的代码、URDF 和参数并重新验证。
+没有开发仓权限的客户直接下载公开发行包，不需要申请旧仓权限。
+已是新开发仓的干净工作区可执行 `git pull --ff-only`；若失败，先检查本地修改，不强制覆盖。
+旧仓 `v0.1`、`v0.2` 标签和发行资产保留为历史记录，仅授权用户可访问。
+保存 `git rev-parse HEAD` 的结果用于复现。详见[迁移说明](REPOSITORY_MIGRATION.zh-CN.md)。
 
 ## ROS2 通信运行
 
@@ -132,6 +131,6 @@ TCP/IP 版本诊断仅需 Python 标准库；ROS2 观察工具使用上述独立
 | NumPy 或 `pkg_resources` 错误 | 新建虚拟环境，按固定依赖安装，避免混用历史环境 |
 | `No module named rclpy` | 在独立 ROS2 终端加载 `setup.bash` 并使用其系统 Python |
 | 规划任务 `failed` | 读取 `error.details`；检查限位、障碍物、依赖和路径是否存在 |
-| 网络下载失败 | 检查 GitHub 与 Python 包源连接；当前未提供离线运行包 |
+| 网络下载失败 | 检查 GitHub 与 Python 包源连接；源码依赖仍需下载；客户可用公开发行仓的封装运行包，系统库另行准备 |
 
 固定直接依赖和历史环境记录见 [ENVIRONMENT.md](ENVIRONMENT.md)。完整间接依赖并非跨平台锁文件。

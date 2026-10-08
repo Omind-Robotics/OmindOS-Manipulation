@@ -1,4 +1,8 @@
-# OmindOS Manipulation 0.2
+# OmindOS Manipulation 0.2 — Private development
+
+This source repository is private and requires team access. Customers should use the
+[public release and installation guide](https://github.com/maganrobotics-boop/OmindOS-Manipulation-Release). The customer kit does not require access to this repository or the retired Community repository.
+See [repository migration](docs/REPOSITORY_MIGRATION.zh-CN.md) for historical records and old checkouts.
 
 Simulation examples for learning UR3e kinematics, grasping, collision checking,
 RRT-Connect, fixed dual arms and mobile manipulation task composition.
@@ -12,7 +16,7 @@ Run `python -m community.rm75_navigation` for navigation, verified stopping, and
 
 The seven demos and the ROS2 mock transport were checked in the original v0.1
 release. See [historical results](docs/COMMUNITY_VALIDATION.md) and
-[current CI](https://github.com/maganrobotics-boop/OmindOS-Manipulation-Community/actions/workflows/community.yml).
+[current CI](https://github.com/maganrobotics-boop/OmindOS-Manipulation/actions/workflows/community.yml).
 Physical robots, contact dynamics and production deployment remain outside the
 verified scope.
 
@@ -28,8 +32,8 @@ A candidate is not a verified release until its standalone check passes.
 ## Development setup
 
 ```bash
-git clone --branch main --single-branch https://github.com/maganrobotics-boop/OmindOS-Manipulation-Community.git
-cd OmindOS-Manipulation-Community
+git clone --branch main --single-branch https://github.com/maganrobotics-boop/OmindOS-Manipulation.git
+cd OmindOS-Manipulation
 python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements-community.txt

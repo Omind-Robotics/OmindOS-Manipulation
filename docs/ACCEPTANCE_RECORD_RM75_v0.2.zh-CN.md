@@ -1,5 +1,7 @@
 # OmindOS Manipulation 0.2 — RM75-B 客户验收记录
 
+> 历史记录说明：本页指向旧 Community 的 Release、tag 或 CI 链接用于追溯，私有化后需要旧仓权限；不作为客户安装依赖。当前客户入口为[公开发行仓](https://github.com/maganrobotics-boop/OmindOS-Manipulation-Release)，参见[迁移说明](REPOSITORY_MIGRATION.zh-CN.md)。
+
 模板版本：v0.2；软件基线：`v0.2` / `6726ddfdf84bf9eb44a36671566f5199856cbe32`。
 目标模型：左 RM75-B 7 轴＋右 RM75-B 7 轴＋pitch 腰部 1 轴；底盘 `x/y/yaw` 单独记录。
 

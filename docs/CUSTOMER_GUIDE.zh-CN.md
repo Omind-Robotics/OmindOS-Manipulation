@@ -8,7 +8,8 @@
 适用对象：机械臂应用开发、系统集成、教学与科研用户
 
 客户封装运行包的安装、URDF/参数与新十五关节/底盘 API，见 [发行版指南](CUSTOMER_RELEASE.zh-CN.md)。
-下面的源码安装步骤属于开发版；不是精简发行包的安装步骤。
+普通客户入口：[公开发行仓](https://github.com/maganrobotics-boop/OmindOS-Manipulation-Release)。
+下面的源码安装步骤仅供有私有开发仓权限的团队成员；客户运行包不依赖旧 Community 仓。
 
 ## 1. 产品用途与交付范围
 
@@ -16,7 +17,7 @@ OmindOS Manipulation 提供机械臂运动规划、抓取候选生成、碰撞�
 单臂与双臂示例，以及与外部系统连接的接口参考。用户可先安装软件完成离线验证，
 再按照本机型号、夹爪和现场配置开展设备集成。
 
-当前版本交付源码、模型、离线规划 API、模拟 ROS2 通信示例、只读设备诊断工具及文档。
+本私有开发版保留源码、模型、离线规划 API、模拟 ROS2 通信示例、只读设备诊断工具及文档。
 **RM75、腰部、底盘及夹爪的真机运动执行适配，以及真实 UR3e 自动抓放适配，均未包含在本版本中。**
 设备接入章节用于连接检查和后续集成验收，不代表所有客户设备均可安装后直接自动抓放。
 
@@ -33,16 +34,18 @@ OmindOS Manipulation 提供机械臂运动规划、抓取候选生成、碰撞�
 
 ## 2. 获取软件与确认版本
 
-仓库地址：<https://github.com/maganrobotics-boop/OmindOS-Manipulation-Community>
+私有开发仓：<https://github.com/maganrobotics-boop/OmindOS-Manipulation>（需要团队访问权限）
 
-最新维护内容位于 `main`。`v0.2` 是固定发布快照，对应
+公开客户发行仓：<https://github.com/maganrobotics-boop/OmindOS-Manipulation-Release>
+
+开发仓最新维护内容位于 `main`。旧 Community 仓的 `v0.2` 是固定历史快照，对应
 `6726ddfdf84bf9eb44a36671566f5199856cbe32`；新增验收表通过主线文档提供，
 不回写该标签或发行资产。原 `v0.1` Release 保留为历史版本。
 使用当前主线时记录完整提交号；按 v0.2 复验时另行记录软件发布提交与验收模板提交。
 
 ```bash
-git clone --branch main --single-branch https://github.com/maganrobotics-boop/OmindOS-Manipulation-Community.git
-cd OmindOS-Manipulation-Community
+git clone --branch main --single-branch https://github.com/maganrobotics-boop/OmindOS-Manipulation.git
+cd OmindOS-Manipulation
 git rev-parse HEAD
 ```
 
@@ -152,7 +155,7 @@ UR3e、PolyScope 和原 12/13 关节模拟通信通过，不能替代 RM75 目�
 `main` 会继续更新。项目开始时保留源代码提交号、配置文件和测试结果，
 在更新前先保存客户自己的程序与配置。升级方法见[安装指南](INSTALL.zh-CN.md#已有仓库升级)。
 
-出现问题时，记录以下内容再提交至[仓库 Issues](https://github.com/maganrobotics-boop/OmindOS-Manipulation-Community/issues)：
+出现问题时，记录以下内容再提交至[仓库 Issues](https://github.com/maganrobotics-boop/OmindOS-Manipulation/issues)：
 软件提交号、系统与 Python / ROS2 版本、问题所属阶段、最小复现命令、退出码与相关日志。
 报告中涉及机器人地址、序列号、人员信息和现场数据时，公开发布前先删除或替换这些内容。
 

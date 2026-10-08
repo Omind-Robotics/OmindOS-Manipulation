@@ -1,5 +1,7 @@
 # 更新记录
 
+> 历史记录说明：本页指向旧 Community 的 Release、tag 或 CI 链接用于追溯，私有化后需要旧仓权限；不作为客户安装依赖。当前客户入口为[公开发行仓](https://github.com/maganrobotics-boop/OmindOS-Manipulation-Release)，参见[迁移说明](docs/REPOSITORY_MIGRATION.zh-CN.md)。
+
 ## v0.2 — OmindOS Manipulation 0.2（2026-10-07）
 
 - 新增纯 Python 底盘栅格 A*、平面运动学、整机运输包络与绕障演示，导航后执行双 RM75＋pitch 腰部运动。

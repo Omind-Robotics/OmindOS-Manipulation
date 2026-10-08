@@ -1,5 +1,7 @@
 # OmindOS Manipulation 0.2
 
+> 历史记录说明：本页指向旧 Community 的 Release、tag 或 CI 链接用于追溯，私有化后需要旧仓权限；不作为客户安装依赖。当前客户入口为[公开发行仓](https://github.com/maganrobotics-boop/OmindOS-Manipulation-Release)，参见[迁移说明](REPOSITORY_MIGRATION.zh-CN.md)。
+
 底盘导航＋双睿尔曼 RM75-B＋pitch 腰部的联动运动学仿真。
 
 - 左臂 7 轴、右臂 7 轴、腰部 1 轴，共 15 个上半身关节；底盘另外使用 `x / y / yaw` 三个平面坐标。

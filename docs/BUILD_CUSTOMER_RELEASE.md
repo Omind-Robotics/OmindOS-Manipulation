@@ -5,8 +5,12 @@ from an explicit allowlist: standard-library SDK, one editable task example,
 manufacturer arm URDF/meshes, arm/waist/chassis scene settings and documentation.
 The frozen runtime embeds Python bytecode and native dependencies. It does not
 ship the core `.py` files and is not encryption or an anti-reverse-engineering
-guarantee. Existing public source remains public; this build changes no repository
-visibility. The historical package namespace `community` stays for compatibility.
+guarantee. Previously distributed copies retain their applicable licenses; this build
+does not change repository visibility. The historical package namespace `community` stays for compatibility.
+
+Customer downloads and installation instructions live in the [public release repository](https://github.com/maganrobotics-boop/OmindOS-Manipulation-Release).
+The old Community repository is retained only for authorized historical access.
+Builds use this private checkout and must not clone or download from the old repository.
 
 ## Build
 

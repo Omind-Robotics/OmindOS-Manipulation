@@ -1,5 +1,7 @@
 # OmindOS Manipulation Community v0.1
 
+> 历史记录说明：本页指向旧 Community 的 Release、tag 或 CI 链接用于追溯，私有化后需要旧仓权限；不作为客户安装依赖。当前客户入口为[公开发行仓](https://github.com/maganrobotics-boop/OmindOS-Manipulation-Release)，参见[迁移说明](REPOSITORY_MIGRATION.zh-CN.md)。
+
 ## Release scope
 
 This version adds a runnable Community learning layer over the original

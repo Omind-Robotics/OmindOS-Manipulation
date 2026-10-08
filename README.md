@@ -1,4 +1,8 @@
-# OmindOS Manipulation 0.2
+# OmindOS Manipulation 0.2 开发版
+
+本仓库为私有开发源码，仅授权团队可访问。客户统一使用
+[公开发行仓与安装说明](https://github.com/maganrobotics-boop/OmindOS-Manipulation-Release)，无需访问开发仓或旧 Community 仓。
+仓库分工、旧克隆迁移与历史记录权限见[迁移说明](docs/REPOSITORY_MIGRATION.zh-CN.md)。
 
 机械臂运动与抓取规划软件，由 OriginMind 源灵智能维护。
 基于原有 UR3e / WRS 工程，提供单臂、固定双臂和移动操作示例，以及可传入自定义参数的 Python 规划接口。
@@ -8,10 +12,12 @@
 原地十五关节演示保留为 `python -m community.mobile_dual_pitch`。
 
 **当前版本：OmindOS Manipulation 0.2。** 适用于离线几何规划、仿真示例和接口开发。
-已发布的 [v0.1 源码快照](https://github.com/maganrobotics-boop/OmindOS-Manipulation-Community/releases/tag/v0.1) 保持不变；
+已发布的 [v0.1 历史源码快照（需旧仓权限）](https://github.com/maganrobotics-boop/OmindOS-Manipulation-Community/releases/tag/v0.1) 保持不变；
 [0.2 发布说明](docs/RELEASE_v0.2.md)包含底盘导航联动、统一 API 与中文手册。`main` 随后续修订更新，复现实验时请记录提交号。
 
-**客户从这里开始：[0.2 发行包与移动双臂 API](docs/CUSTOMER_RELEASE.zh-CN.md)**
+**客户从这里开始：[0.2 公开发行包与安装说明](https://github.com/maganrobotics-boop/OmindOS-Manipulation-Release/releases/tag/v0.2-runtime.1)**
+
+[发行包与移动双臂 API 文档](docs/CUSTOMER_RELEASE.zh-CN.md)
 
 开发版保留完整工程。客户发行包保留 URDF/网格、腰部与底盘参数、标准库 SDK、
 调用示例和文档，算法以封装运行程序提供。新接口支持客户指定十五关节目标和底盘导航场景。
@@ -25,7 +31,9 @@
 [RM75-B 0.2 验收记录](docs/ACCEPTANCE_RECORD_RM75_v0.2.zh-CN.md) ·
 [旧版验收参考](docs/ACCEPTANCE_RECORD.zh-CN.md) · [更新记录](CHANGELOG.md) · [English](README.en.md)
 
-## 安装与第一次运行
+## 开发源码安装与第一次运行
+
+以下步骤需要本私有仓库的读取权限。普通客户按上方公开发行包说明安装。
 
 参考环境：**Ubuntu 24.04 x86_64、Python 3.12**。无需连接机器人即可运行。
 
@@ -33,8 +41,8 @@
 sudo apt-get update
 sudo apt-get install -y git python3.12-venv libgl1 libgomp1
 
-git clone --branch main --single-branch https://github.com/maganrobotics-boop/OmindOS-Manipulation-Community.git
-cd OmindOS-Manipulation-Community
+git clone --branch main --single-branch https://github.com/maganrobotics-boop/OmindOS-Manipulation.git
+cd OmindOS-Manipulation
 python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements-community.txt
@@ -138,7 +146,7 @@ python -m community.verify
 ```
 
 [历史 v0.1 验证记录](docs/COMMUNITY_VALIDATION.md) ·
-[当前自动检查](https://github.com/maganrobotics-boop/OmindOS-Manipulation-Community/actions/workflows/community.yml)
+[当前自动检查](https://github.com/maganrobotics-boop/OmindOS-Manipulation/actions/workflows/community.yml)
 
 0.2 已提供发布版 Navigation 仿真话题对接与移动双臂运动学联动。真机驱动、标定及实际抓放仍需独立联调。
 硬件驱动、接触力学、感知识别和整机实测不属于本次交付修订的已完成功能。

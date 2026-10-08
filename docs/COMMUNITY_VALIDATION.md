@@ -1,5 +1,7 @@
 # Community v0.1 verification
 
+> 历史记录说明：本页指向旧 Community 的 Release、tag 或 CI 链接用于追溯，私有化后需要旧仓权限；不作为客户安装依赖。当前客户入口为[公开发行仓](https://github.com/maganrobotics-boop/OmindOS-Manipulation-Release)，参见[迁移说明](REPOSITORY_MIGRATION.zh-CN.md)。
+
 Recorded 2026-10-06 (Asia/Shanghai). Starting branch commit:
 `30ce37feb53c2ff5e77faeeccd2d3e95b0accc8a`.
 

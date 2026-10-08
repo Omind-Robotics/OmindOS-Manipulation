@@ -10,8 +10,21 @@ OriginMind 源灵智能维护的移动双臂规划软件。默认整机是移动
 及所需库，客户端不需要安装完整仿真依赖。图形显示和不同 Linux 发行版需在目标机验证。
 开发参考环境是 Ubuntu 24.04 / Python 3.12；实际构建与验证环境记录在 `VERSION.json`。
 
-把两个命名压缩包和 `SHA256SUMS` 下载到同一目录。GitHub 自动生成的 Source code
-是开发源码快照，不能代替下面的运行包。
+从 [Releases](https://github.com/maganrobotics-boop/OmindOS-Manipulation-Release/releases)
+下载 `OmindOS-Manipulation-0.2-Customer-Release-Linux-amd64.zip` 和 `SHA256SUMS-Customer-Release`。
+完整 ZIP 包含客户端、封装运行程序及验收记录。
+上述公开发行仓保存发行说明与验收记录；客户 SDK、模型和参数均在发行 ZIP 中。
+GitHub 自动生成的 Source code 仅是本入口的文档快照，不能代替客户运行包。
+公开发行内容不附送核心算法 `.py` 源码。
+
+```bash
+sha256sum -c SHA256SUMS-Customer-Release
+mkdir -p omindos-0.2-release
+unzip OmindOS-Manipulation-0.2-Customer-Release-Linux-amd64.zip -d omindos-0.2-release
+cd omindos-0.2-release
+```
+
+继续校验、安装并运行：
 
 ```bash
 sha256sum -c SHA256SUMS
@@ -102,3 +115,10 @@ with ManipulationClient() as client:
 Optional Navigation v0.1 是独立运行环境，本包没有复制或重新分发其镜像。
 已采集记录的导入不等于实时底盘驱动。真机需要底盘/机械臂驱动、工具与整机标定、
 时间参数化、控制器执行和现场验收；本版不声明已完成这些工作。
+
+## 本次验收
+
+版本 `0.2`，封装修订 `runtime.1`。55 项回归与脱离源码目录的独立安装验收通过。
+独立运行覆盖底盘到达及连续停稳、十五关节规划、碰撞拦截、URDF 配置修改、取消与超时。
+构建和验收平台为 Linux x86_64 / glibc 2.39，其他系统需另行验证。真机尚未验收。
+完整记录在发行 ZIP 的 `VALIDATION.json`、`manifest.json` 和日志中。

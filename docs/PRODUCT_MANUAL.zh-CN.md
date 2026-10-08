@@ -76,8 +76,8 @@ OmindOS Manipulation 用于机械臂运动规划、抓取几何验证与移动�
 
 ## 版本与问题反馈
 
-`v0.2` 为本次发布快照，`main` 提供持续维护的主线，`v0.1` 保留原始发布快照；其他研发分支不属于当前交付入口。
+客户使用[公开发行仓](https://github.com/maganrobotics-boop/OmindOS-Manipulation-Release)中的 `v0.2-runtime.1` 运行包；本私有开发仓 `main` 持续维护源码。旧 Community 的 `v0.1`、`v0.2` 为历史快照，需旧仓访问权限。
 请记录 `git rev-parse HEAD`、操作系统、Python 版本、运行命令、参数和错误日志。
-通过[仓库 Issues](https://github.com/maganrobotics-boop/OmindOS-Manipulation-Community/issues)提交可复现问题。
+通过[仓库 Issues](https://github.com/maganrobotics-boop/OmindOS-Manipulation/issues)提交可复现问题。
 
 来源、版权及许可证见 [ATTRIBUTION.md](../ATTRIBUTION.md) 与 [LICENSE](../LICENSE)。
