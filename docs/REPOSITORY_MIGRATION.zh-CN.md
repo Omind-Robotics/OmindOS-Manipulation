@@ -6,7 +6,7 @@
 |---|---|
 | [OmindOS-Manipulation-Release](https://github.com/maganrobotics-boop/OmindOS-Manipulation-Release) | 公开客户发行入口：完整运行 ZIP、SHA256、安装文档与离线验证记录 |
 | [OmindOS-Manipulation](https://github.com/maganrobotics-boop/OmindOS-Manipulation) | 私有开发源码：仅授权团队使用，后续开发基线为 `main` |
-| OmindOS-Manipulation-Community | 历史仓：按三仓方案设为私有并归档；保留提交、分支、标签、Release 及其资产 |
+| OmindOS-Manipulation-Community | 历史仓：已设为私有并归档；保留提交、分支、标签、Release 及其资产 |
 
 ## 客户安装
 
@@ -44,3 +44,13 @@ ZIP、客户端和运行包的校验均通过。在源码目录之外解压，�
 
 GitHub Fork 需要先使用 “Leave fork network” 成为独立仓库，才能修改为私有；这会永久解除上游关系。
 归档用于保留历史并停止写入，不执行仓库删除、标签重写或资产删除。
+
+## 完成复核（2026-10-08，北京时间）
+
+- 公开发行仓：`private=false`、`archived=false`；私有开发仓：`private=true`、`archived=false`；旧 Community：`private=true`、`archived=true`、`fork=false`。
+- 旧仓保留原 repository ID `1406302408`；归档前后 11 个分支的提交号、2 个 tag 的目标提交均完全一致，`main` 仍为 `a0672c645dcd9db7db9abce6ca4ccd1b19f9ea22`。
+- 旧仓 v0.1 / v0.2 两条 Release 的 ID 与资产清单不变；v0.2 两个资产的 ID、字节数、SHA256 均不变。公开发行仓 runtime.1 的资产也未修改。
+- 私有化后匿名检查发行仓首页、runtime.1 发布页、完整 ZIP 和外层 SHA256 文件，均返回 HTTP 200。
+- Navigation 公开首页的旧安装入口已替换为公开发行仓（提交 `67d6f6b99655ef7516e34208ef1438441c3f7ae1`）。已核对官网中英文 OmindOS 与双臂产品入口源码，未发现旧仓链接。
+- 开发仓迁移提交 `4efe0eb0fdafe59c6f2c603cbba2f14612569f7b`：`Customer runtime package`（run `37706588521`）与 `Community verification`（run `37706588442`）均成功。
+- 本次没有执行真机运动，`hardware: not tested` 继续保留。
