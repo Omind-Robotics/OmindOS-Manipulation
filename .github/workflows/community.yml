@@ -63,7 +63,8 @@ jobs:
       - name: Load the immutable Navigation v0.1 runtime
         shell: bash
         run: |
-          curl -fL --retry 3 --max-time 240 https://github.com/maganrobotics-boop/OmindOS-Navigation-Community/releases/download/v0.1/omindos-navigation-v0.1-runtime-amd64.tar.gz -o /tmp/navigation.tar.gz
+          # Byte-identical original runtime mirror; old Community repo is private.
+          curl -fL --retry 3 --max-time 240 https://omindos.cn/downloads/navigation/v0.1/omindos-navigation-v0.1-runtime-amd64.tar.gz -o /tmp/navigation.tar.gz
           echo '9a2fbed8baeb53b33586c5f76674dead3a6b29d3973fe508f4928e3928f9f491  /tmp/navigation.tar.gz' | sha256sum -c -
           docker load -i /tmp/navigation.tar.gz
       - name: Exercise real goal, path, localization and velocity topics
