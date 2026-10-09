@@ -26,6 +26,8 @@
 
 [原有客户流程与设备接入](docs/CUSTOMER_GUIDE.zh-CN.md)
 
+开发候选新增[双手任务空间与共享腰关节算法](docs/DUAL_TASK_ALGORITHM.zh-CN.md)：两手目标位姿联合逆解、固定抓持关系的协同路径及采样碰撞检查。入口 `python -m community.dual_task_motion --headless`；尚未封装进客户发行包。
+
 [产品说明](docs/PRODUCT_MANUAL.zh-CN.md) · [安装指南](docs/INSTALL.zh-CN.md) ·
 [API 使用手册](docs/API.zh-CN.md) · [UR3e 接入参考](docs/UR3E_COMMISSIONING.zh-CN.md) ·
 [RM75-B 0.2 验收记录](docs/ACCEPTANCE_RECORD_RM75_v0.2.zh-CN.md) ·
