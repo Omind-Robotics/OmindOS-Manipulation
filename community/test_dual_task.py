@@ -163,6 +163,8 @@ class ManufacturerKinematicsTests(unittest.TestCase):
                     axis = np.array(list(map(float, joint.find('axis').get('xyz').split())))
                     step[:3, :3] = step[:3, :3] @ Rotation.from_rotvec(axis*value).as_matrix()
                     t = t @ step
+                # Reference Hand-E TCP in the assembly is 0.14 m past flange.
+                t = t @ translation(0, 0, .14)
                 result.append(t)
             return result
 
@@ -176,7 +178,8 @@ class ManufacturerKinematicsTests(unittest.TestCase):
         for actual, target in zip(poses(solution), poses(goal)):
             p, r = pose_error(actual, target)
             self.assertLess(p, 1e-4); self.assertLess(r, .001)
-        plan = planner.plan_object_motion(start, [np.eye(4), translation(.01, 0, .005)], poses(start))
+        plan = planner.plan_object_motion(start,
+                [np.eye(4), translation(.015, 0, .01), np.eye(4)], poses(start))
         self.assertLess(plan['max_tcp_position_error_m'], .001)
         self.assertLess(plan['max_relative_position_error_m'], .002)
         self.assertGreater(plan['validated_samples'], 2)

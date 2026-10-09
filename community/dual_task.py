@@ -138,7 +138,11 @@ class DualTaskPlanner:
                               / s.ik_rotation_rad)
             return np.asarray(errors)
 
+        # Two six-dimensional tasks leave redundant joint directions. LSMR's
+        # regularized trust-region solve avoids the exact-SVD solver's slow
+        # convergence in this underdetermined system; scale joint columns too.
         solution = least_squares(residual, q0, bounds=self.limits.T, method='trf',
+                                 tr_solver='lsmr', x_scale='jac',
                                  max_nfev=s.max_nfev, ftol=1e-10, xtol=1e-10, gtol=1e-10)
         q = self._q(solution.x)
         errors = [pose_error(a, b) for a, b in zip(self._poses(q), targets)]
