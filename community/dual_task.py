@@ -3,7 +3,7 @@
 FK and collision callbacks use the same fixed-base robot model. This is a local
 geometric planner; it neither searches around obstacles nor commands hardware.
 """
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 import math
 import numpy as np
 from scipy.optimize import least_squares
@@ -203,6 +203,7 @@ class DualTaskPlanner:
         return dict(schema='omindos.community.dual_task.v1', simulation_only=True,
                     collision_check='sampled', continuous_collision_checked=False,
                     timed=False, hardware_executed=False,
+                    settings=asdict(s),
                     positions_rad=samples, object_poses=object_samples,
                     object_to_tcp=[g.tolist() for g in grasps],
                     validated_samples=len(samples),
@@ -244,6 +245,8 @@ def plan_robot_object_motion(robot, start, object_poses, grasp_transforms, *, ob
         result = planner.plan_object_motion(start, object_poses, grasp_transforms)
         result['joint_names'] = (['waist_pitch_joint'] + [f'left_joint_{i}' for i in range(1, 8)]
                                  + [f'right_joint_{i}' for i in range(1, 8)])
+        result['base_position_m'] = np.asarray(robot.pos).tolist()
+        result['base_rotation'] = np.asarray(robot.rotmat).tolist()
         return result
     finally:
         robot.fk(robot.component, saved)

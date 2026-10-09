@@ -98,10 +98,20 @@ class CoupledTaskTests(unittest.TestCase):
             self.planner(settings=TrackingSettings(max_samples=2)).plan_object_motion(np.zeros(7),
                 [np.eye(4), translation(.04)], [translation(0, .2), translation(0, -.2)])
 
+    def test_relative_grasp_constraint_stricter_than_individual_tcp_tolerance(self):
+        grasps = [translation(0, .2005), translation(0, -.2005)]
+        # Each TCP is within 1 mm of its individual target but their separation
+        # is wrong by 1 mm; a 0.1 mm relative grasp constraint must reject it.
+        with self.assertRaises(PlanningFailure):
+            self.planner(settings=TrackingSettings(relative_position_m=.0001)).plan_object_motion(
+                np.zeros(7), [np.eye(4)], grasps)
+
     def test_adapter_restores_robot_on_success_and_failure(self):
         class Robot:
             component = 'waist_and_arms'
             cc = object()
+            pos = np.zeros(3)
+            rotmat = np.eye(3)
             q = np.zeros(7)
             blocked = False
             def get_jnt_values(self, component): return self.q.copy()
