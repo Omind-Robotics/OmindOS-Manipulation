@@ -85,6 +85,7 @@ def main():
         shutil.copy2(ROOT/'sdk'/path, client/'sdk'/path)
     (client/'examples').mkdir()
     shutil.copy2(ROOT/'examples/customer/mobile_dual_api.py', client/'examples/mobile_dual_api.py')
+    shutil.copy2(ROOT/'examples/customer/dual_task_api.py', client/'examples/dual_task_api.py')
     shutil.copytree(ROOT/'community/models/realman_rm75', client/'robot/arm-model')
     # Uncompressed mesh copies make the provided manufacturer URDF usable by
     # ordinary external URDF viewers as well as the frozen runtime.
@@ -102,7 +103,7 @@ def main():
     shutil.copy2(ROOT/'ATTRIBUTION.md', client/'ATTRIBUTION.md')
     revision = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
     dirty = bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).strip())
-    manifest = dict(product='OmindOS Manipulation', version='0.2', package_revision='runtime.1',
+    manifest = dict(product='OmindOS Manipulation', version='0.2', package_revision='runtime.2',
                     base_commit=revision, uncommitted_changes=dirty, simulation_only=True,
                     platform=platform.platform(), machine=platform.machine(), source_audit=audit_result)
     (client/'VERSION.json').write_text(json.dumps(manifest, indent=2)+'\n')

@@ -6,6 +6,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: community-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   simulation:
     runs-on: ubuntu-24.04
@@ -18,8 +21,9 @@ jobs:
           cache: pip
           cache-dependency-path: requirements-community.txt
       - run: python -m pip install -r requirements-community.txt
-      - run: python -m unittest community.test_contract community.test_api community.test_pitch community.test_dual7 community.test_rm75 community.test_navigation community.test_customer_api
+      - run: python -m unittest community.test_contract community.test_api community.test_pitch community.test_dual7 community.test_rm75 community.test_navigation community.test_customer_api community.test_dual_task community.test_dual_task_rm75
       - run: python -m community.verify
+      - run: python -m community.dual_task_motion --headless --output community-results/dual-task.json --plan-output community-results/dual-task-plan.json
       # Keep the separate legacy ROS2 transport fixture at its original 13 joints.
       - run: python -m community.legacy_mobile_dual_pitch --headless --plan-output community-results/ros2-waist-playback.json
       - run: python -m community.api_example
@@ -56,13 +60,23 @@ jobs:
             community-results/ros2-waist/
   navigation-runtime:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        id: navigation-image
+        with:
+          path: /tmp/navigation.tar.gz
+          key: navigation-v01-9a2fbed8baeb53b33586c5f76674dead3a6b29d3973fe508f4928e3928f9f491
+      - name: Download the immutable Navigation v0.1 runtime
+        if: steps.navigation-image.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          # Byte-identical original runtime mirror; allow for cross-region transfers.
+          curl -fL --retry 1 --max-time 1200 https://omindos.cn/downloads/navigation/v0.1/omindos-navigation-v0.1-runtime-amd64.tar.gz -o /tmp/navigation.tar.gz
       - name: Load the immutable Navigation v0.1 runtime
         shell: bash
         run: |
-          curl -fL --retry 3 --max-time 240 https://github.com/maganrobotics-boop/OmindOS-Navigation-Community/releases/download/v0.1/omindos-navigation-v0.1-runtime-amd64.tar.gz -o /tmp/navigation.tar.gz
           echo '9a2fbed8baeb53b33586c5f76674dead3a6b29d3973fe508f4928e3928f9f491  /tmp/navigation.tar.gz' | sha256sum -c -
           docker load -i /tmp/navigation.tar.gz
       - name: Exercise real goal, path, localization and velocity topics

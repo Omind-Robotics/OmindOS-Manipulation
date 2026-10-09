@@ -1,4 +1,4 @@
-# OmindOS Manipulation 0.2 发行版
+# OmindOS Manipulation 0.2 runtime.2 发行版
 
 OriginMind 源灵智能维护的移动双臂规划软件。默认整机是移动底盘、一个俯仰腰关节、
 左右各七轴 RM75-B 机械臂。上半身共十五关节；底盘单独使用 `x、y、yaw` 三个位姿量。
@@ -10,7 +10,7 @@ OriginMind 源灵智能维护的移动双臂规划软件。默认整机是移动
 及所需库，客户端不需要安装完整仿真依赖。图形显示和不同 Linux 发行版需在目标机验证。
 开发参考环境是 Ubuntu 24.04 / Python 3.12；实际构建与验证环境记录在 `VERSION.json`。
 
-从 [Releases](https://github.com/maganrobotics-boop/OmindOS-Manipulation-Release/releases)
+从 [runtime.2 Releases](https://github.com/maganrobotics-boop/OmindOS-Manipulation-Release/releases/tag/v0.2-runtime.2)
 下载 `OmindOS-Manipulation-0.2-Customer-Release-Linux-amd64.zip` 和 `SHA256SUMS-Customer-Release`。
 完整 ZIP 包含客户端、封装运行程序及验收记录。
 上述公开发行仓保存发行说明与验收记录；客户 SDK、模型和参数均在发行 ZIP 中。
@@ -32,9 +32,11 @@ tar -xzf OmindOS-Manipulation-0.2-client.tar.gz
 cd OmindOS-Manipulation-0.2
 ./install.sh
 python3 examples/mobile_dual_api.py
+python3 examples/dual_task_api.py
 ```
 
 首次运行的成功输出必须有 `status: passed`，并生成 `results/customer-api.json`。
+双手协同示例生成 `results/dual-task-api.json`，包含十五关节路径、两手目标误差和相对抓持误差。
 安装脚本只校验并解压运行包；无需管理员权限。目标机可能需安装 OpenGL/X11 系统库
 （Ubuntu 可用 `sudo apt-get install libgl1 libgomp1`）。不需要 ROS 即可运行离线示例。
 
@@ -48,6 +50,7 @@ python3 examples/mobile_dual_api.py
 | `robot/navigation.json` | 地图范围、分辨率、起终点底盘位姿和场景障碍物 |
 | `sdk/omindos_client.py` | 标准库 Python 客户端；客户程序通过它提交任务 |
 | `examples/mobile_dual_api.py` | 十五关节规划和底盘到位后双臂规划的完整调用例子 |
+| `examples/dual_task_api.py` | 固定底盘，双臂与共享腰部共同跟踪物体位姿的完整调用例子 |
 | `runtime/` | 封装后的算法程序、依赖、内部默认模型和许可证，不需要修改 |
 
 URDF 引用的网格必须随模型保留。`package://名称/meshes/文件.STL` 在本包中按 URDF
@@ -88,17 +91,25 @@ with ManipulationClient() as client:
 | 操作 | 入口 | 输入与结果 |
 |---|---|---|
 | 查询配置后的整机模型 | `get_mobile_model(arm_config=..., waist_config=...)` | 返回十五关节顺序、初始角、位置限位和源 URDF 关节名 |
+| 双手任务空间协同 | `plan_mobile_object_motion(start, object_poses, object_to_tcp, ...)` | 联合求解腰部与两臂，返回固定抓持关系的十五关节几何路径及绝对/相对误差 |
 | 底盘固定时规划上半身 | `plan_mobile_joint_motion(start, goal, base_pose=..., obstacles=...)` | 自定义十五关节目标；返回密集采样路径，底盘位姿保持不变 |
 | 底盘导航＋双臂腰部任务 | `plan_mobile_task(scene=..., target_positions=...)` | 先离线规划并验证底盘全程，再通过到达/连续停稳门禁，随后规划上半身 |
 | 导入已采集的导航记录 | `plan_mobile_task(navigation_trace=..., target_positions=...)` | 按既有 Navigation v0.1 仿真话题记录验收底盘碰撞与停稳，再规划上半身 |
 | 原有单臂与抓取 | `plan_joint_motion(...)`、`plan_grasps(...)` | 六轴 UR3e 几何路径与 Robotiq85 长方体抓取候选，模型范围不变 |
 | 任务管理 | `get_status(task)`、`wait(task, timeout=120)`、`stop(task)` | 查询、等待和取消本地计算；不是硬件急停 |
-| 内置示例 | `run_demo(name)` | 九个固定无窗口示例；自定义配置用上述规划入口 |
+| 内置示例 | `run_demo(name)` | 十个固定无窗口示例，包括 `dual_task_motion`；自定义配置用上述规划入口 |
 
 所有提交返回 `task_id`；通过 `wait` 得到状态与结果。关节顺序为腰部、左臂七关节、
 右臂七关节，角度为弧度，距离为米。固定底盘规划的障碍物中心在 `map` 坐标系。
 `scene` 与 `navigation_trace` 必须二选一；导航门禁失败不会继续双臂规划。
 省略配置使用内部默认模型，正式客户调用建议始终指定自己的配置文件。
+
+`object_poses` 是世界坐标系中的物体 4×4 齐次变换序列；`object_to_tcp` 是两个固定的
+物体到左右 TCP 的 4×4 变换。起始关节必须匹配第一帧抓持关系。
+`get_mobile_model()` 返回初始配置的 `home_tcp_poses`，可用于建立示例中的虚拟抓持框架。
+障碍、不可达或采样预算不足会返回失败，不返回标为成功的部分路径。
+客户入口检查整机及输入箱形障碍，不建立实际物体碰撞体或双手接触力模型。
+当前采用局部逆解和离散约束检查，尚不支持抓持约束下搜索绕障路径。
 
 底盘任务返回 `navigation.samples`、`transport_positions_rad`、
 `manipulation_positions_rad`、`phase_history` 和校验数量。阶段顺序为
@@ -118,7 +129,7 @@ Optional Navigation v0.1 是独立运行环境，本包没有复制或重新分�
 
 ## 本次验收
 
-版本 `0.2`，封装修订 `runtime.1`。55 项回归与脱离源码目录的独立安装验收通过。
-独立运行覆盖底盘到达及连续停稳、十五关节规划、碰撞拦截、URDF 配置修改、取消与超时。
+版本 `0.2`，封装修订 `runtime.2`。发布前要求回归与脱离源码目录的独立安装验收全部通过。
+独立运行覆盖底盘到达及连续停稳、十五关节规划、双手任务空间往返、碰撞拦截、URDF 配置修改、取消与超时。
 构建和验收平台为 Linux x86_64 / glibc 2.39，其他系统需另行验证。真机尚未验收。
 完整记录在发行 ZIP 的 `VALIDATION.json`、`manifest.json` 和日志中。

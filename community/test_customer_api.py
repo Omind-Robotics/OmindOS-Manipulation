@@ -15,6 +15,28 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class CustomerTests(unittest.TestCase):
+    def test_customer_object_motion_and_collision(self):
+        with ManipulationClient() as client:
+            meta = client.wait(client.get_mobile_model())
+            self.assertEqual(meta['status'], 'succeeded', meta)
+            start = meta['result']['home_positions_rad']
+            grasps = meta['result']['home_tcp_poses']
+            identity = np.eye(4)
+            goal = identity.copy(); goal[:3, 3] = [.015, 0., .01]
+            result = client.wait(client.plan_mobile_object_motion(
+                start, [identity.tolist(), goal.tolist(), identity.tolist()], grasps), timeout=120)
+            self.assertEqual(result['status'], 'succeeded', result)
+            plan = result['result']
+            self.assertEqual(plan['dof'], 15)
+            self.assertFalse(plan['timed'])
+            self.assertFalse(plan['hardware_executed'])
+            self.assertGreater(len(plan['positions_rad']), 2)
+            self.assertLess(plan['max_tcp_position_error_m'], .001)
+            self.assertLess(plan['max_relative_position_error_m'], .002)
+            blocked = client.wait(client.plan_mobile_object_motion(start, [identity.tolist()], grasps,
+                obstacles=[dict(size_m=[3., 3., 3.], position_m=[0., 0., 1.])]))
+            self.assertEqual(blocked['status'], 'failed', blocked)
+
     def test_custom_15_joint_path_and_fixed_base(self):
         with ManipulationClient() as client:
             meta = client.wait(client.get_mobile_model())
@@ -72,6 +94,10 @@ class CustomerTests(unittest.TestCase):
 
     def test_invalid_shape_cannot_start_worker(self):
         with ManipulationClient() as client:
+            with self.assertRaises(ValueError):
+                client.plan_mobile_object_motion([0]*15, [np.eye(4).tolist()], [])
+            with self.assertRaises(ValueError):
+                client.plan_mobile_object_motion([0]*15, [[1, 2, 3]], [np.eye(4).tolist()]*2)
             with self.assertRaises(ValueError):
                 client.plan_mobile_joint_motion([0]*14, [0]*15)
             with self.assertRaises(ValueError):

@@ -4,7 +4,7 @@ from PyInstaller.utils.hooks import collect_data_files, collect_dynamic_libs
 
 root = Path(SPECPATH).parent
 demo_names = ('quick_start', 'ur3e_single_arm', 'grasping', 'motion_planning',
-              'dual_arm', 'mobile_dual_arm', 'integrated_task', 'mobile_dual_pitch', 'rm75_navigation')
+              'dual_arm', 'mobile_dual_arm', 'integrated_task', 'mobile_dual_pitch', 'rm75_navigation', 'dual_task_motion')
 datas = [(str(root / 'configs/simulation'), 'configs/simulation'),
          (str(root / 'community/models'), 'community/models')]
 datas += collect_data_files('robot_sim', includes=['**/*.stl', '**/*.STL', '**/*.dae', '**/*.obj'])
