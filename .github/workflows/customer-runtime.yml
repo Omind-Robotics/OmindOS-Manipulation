@@ -21,6 +21,7 @@ jobs:
       - run: python -m PyInstaller --noconfirm tools/runtime.spec
       - run: python tools/package_customer_release.py --runtime dist/omindos-runtime --output build/customer-candidate
       - run: python tools/verify_customer_release.py --candidate build/customer-candidate
+      - run: python tools/bundle_customer_release.py --candidate build/customer-candidate
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -32,3 +33,5 @@ jobs:
             build/customer-candidate/manifest.json
             build/customer-candidate/VALIDATION.json
             build/customer-candidate/*.log
+            build/customer-candidate/*.zip
+            build/customer-candidate/SHA256SUMS-Customer-Release

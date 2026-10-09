@@ -62,9 +62,16 @@ def mobile_robot(request):
 
 
 def mobile_model(request):
+    import numpy as np
     from community.mobile_dual_pitch import JOINT_NAMES
     robot = mobile_robot(request)
+    tcp_poses = []
+    for arm in ('lft_arm', 'rgt_arm'):
+        position, rotation = robot.get_gl_tcp(arm)
+        t = np.eye(4); t[:3, 3], t[:3, :3] = position, rotation
+        tcp_poses.append(t.tolist())
     return dict(dof=15, joint_names=JOINT_NAMES,
+                home_tcp_poses=tcp_poses,
                 home_positions_rad=robot.get_jnt_values(robot.component).tolist(),
                 limits_rad=robot.get_jnt_ranges(robot.component).tolist(),
                 arm_urdf_joint_names={side: [j['name'] for j in cfg._model_data['joints']]
@@ -107,13 +114,34 @@ def mobile_task(request):
     return result
 
 
+def mobile_object_motion(request):
+    import numpy as np
+    import modeling.collision_model as cm
+    from community.dual_task import plan_robot_object_motion
+    from community.rm75_navigation import set_pose
+    robot = mobile_robot(request)
+    set_pose(robot, request['base_pose'])
+    obstacles = []
+    for box in request['obstacles']:
+        obstacle = cm.gen_box(extent=box['size_m'])
+        obstacle.set_pos(np.array(box['position_m']))
+        obstacles.append(obstacle)
+    result = plan_robot_object_motion(robot, request['start'], request['object_poses'],
+                                      request['object_to_tcp'], obstacles=obstacles)
+    result.update(dof=15, frame_id='map', base_pose=request['base_pose'],
+                  obstacles=request['obstacles'],
+                  scope='Fixed-base sampled geometric tracking; virtual grasps; no payload/contact/dynamics/hardware')
+    return result
+
+
 def main():
     from community.common import seed_rng
     request = json.loads(Path(sys.argv[1]).read_text(encoding='utf-8'))
     seed_rng(request['seed'])
     operation = request['operation']
     result = {'joint_motion': joint_motion, 'grasps': grasps, 'mobile_model': mobile_model,
-              'mobile_joint_motion': mobile_joint_motion, 'mobile_task': mobile_task}[operation](request)
+              'mobile_joint_motion': mobile_joint_motion, 'mobile_task': mobile_task,
+              'mobile_object_motion': mobile_object_motion}[operation](request)
     payload = dict(result)
     payload.update(schema='omindos.manipulation.planning.v0.2', status='passed',
                    mode='simulation', simulation_only=True, seed=request['seed'],

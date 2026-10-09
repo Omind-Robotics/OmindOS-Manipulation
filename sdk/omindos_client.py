@@ -17,7 +17,7 @@ import time
 import uuid
 
 DEMOS = ('quick_start', 'ur3e_single_arm', 'grasping', 'motion_planning',
-         'dual_arm', 'mobile_dual_arm', 'integrated_task', 'mobile_dual_pitch', 'rm75_navigation')
+         'dual_arm', 'mobile_dual_arm', 'integrated_task', 'mobile_dual_pitch', 'rm75_navigation', 'dual_task_motion')
 
 
 def _vector(values, length, name, positive=False):
@@ -175,6 +175,32 @@ class ManipulationClient:
             scene=data if scene is not None else None,
             navigation_trace=data if navigation_trace is not None else None,
             target_positions=None if target_positions is None else _vector(target_positions, 15, 'target_positions'),
+            arm_config=self._config(arm_config, True), waist_config=self._config(waist_config)), seed)
+
+    def plan_mobile_object_motion(self, start, object_poses, object_to_tcp, *,
+                                  base_pose=(0., 0., 0.), obstacles=(),
+                                  arm_config=None, waist_config=None, seed=7):
+        """Fixed-base coupled waist/dual-TCP geometric tracking of a virtual object.
+
+        Poses are 4x4 world-to-object transforms; object_to_tcp contains two fixed
+        object-to-left/right-TCP transforms. No payload contact or torque is modeled.
+        Initial joints must already match the first object pose and both grasps.
+        """
+        def matrix(value):
+            try:
+                rows = list(value)
+            except TypeError as exc:
+                raise ValueError('Expected a finite 4x4 pose matrix') from exc
+            if len(rows) != 4:
+                raise ValueError('Expected a finite 4x4 pose matrix')
+            return [_vector(row, 4, 'pose row') for row in rows]
+        poses = [matrix(t) for t in object_poses]
+        grasps = [matrix(t) for t in object_to_tcp]
+        if not 1 <= len(poses) <= 10000 or len(grasps) != 2:
+            raise ValueError('Provide 1..10000 object poses and exactly two grasp transforms')
+        return self._submit('mobile_object_motion', dict(
+            start=_vector(start, 15, 'start'), object_poses=poses, object_to_tcp=grasps,
+            base_pose=_vector(base_pose, 3, 'base_pose x,y,yaw'), obstacles=self._boxes(obstacles),
             arm_config=self._config(arm_config, True), waist_config=self._config(waist_config)), seed)
 
     def run_demo(self, name, *, seed=7):

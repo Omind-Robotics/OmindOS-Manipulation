@@ -15,7 +15,7 @@
 已发布的 [v0.1 历史源码快照（需旧仓权限）](https://github.com/maganrobotics-boop/OmindOS-Manipulation-Community/releases/tag/v0.1) 保持不变；
 [0.2 发布说明](docs/RELEASE_v0.2.md)包含底盘导航联动、统一 API 与中文手册。`main` 随后续修订更新，复现实验时请记录提交号。
 
-**客户从这里开始：[0.2 公开发行包与安装说明](https://github.com/maganrobotics-boop/OmindOS-Manipulation-Release/releases/tag/v0.2-runtime.1)**
+**客户从这里开始：[0.2 runtime.2 公开发行包与安装说明](https://github.com/maganrobotics-boop/OmindOS-Manipulation-Release/releases/tag/v0.2-runtime.2)**
 
 [发行包与移动双臂 API 文档](docs/CUSTOMER_RELEASE.zh-CN.md)
 
@@ -26,7 +26,7 @@
 
 [原有客户流程与设备接入](docs/CUSTOMER_GUIDE.zh-CN.md)
 
-开发候选新增[双手任务空间与共享腰关节算法](docs/DUAL_TASK_ALGORITHM.zh-CN.md)：两手目标位姿联合逆解、固定抓持关系的协同路径及采样碰撞检查。入口 `python -m community.dual_task_motion --headless`；尚未封装进客户发行包。
+新增[双手任务空间与共享腰关节算法](docs/DUAL_TASK_ALGORITHM.zh-CN.md)：两手目标位姿联合逆解、固定抓持关系的协同路径及采样碰撞检查。开发入口 `python -m community.dual_task_motion --headless`；runtime.2 客户 SDK 入口 `plan_mobile_object_motion`。
 
 [产品说明](docs/PRODUCT_MANUAL.zh-CN.md) · [安装指南](docs/INSTALL.zh-CN.md) ·
 [API 使用手册](docs/API.zh-CN.md) · [UR3e 接入参考](docs/UR3E_COMMISSIONING.zh-CN.md) ·

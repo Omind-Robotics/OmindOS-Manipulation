@@ -29,6 +29,15 @@ with ManipulationClient() as client:
     info=finish(client,client.get_mobile_model(arm_config=arms,waist_config=waist))
     assert info["dof"] == 15
     start=info["home_positions_rad"]
+    identity=[[1.,0.,0.,0.],[0.,1.,0.,0.],[0.,0.,1.,0.],[0.,0.,0.,1.]]
+    finish(client,client.plan_mobile_object_motion(start,[identity],info["home_tcp_poses"],
+        obstacles=[{"size_m":[3,3,3],"position_m":[0,0,1]}],arm_config=arms,waist_config=waist),"failed")
+    try:
+        client.plan_mobile_object_motion(start,[identity],[])
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("invalid grasp shape accepted")
     goal=start.copy();goal[0],goal[7],goal[14]=.1,.2,-.2
     path=finish(client,client.plan_mobile_joint_motion(start,goal,arm_config=arms,waist_config=waist))
     assert path["positions_rad"][0] == start and path["positions_rad"][-1] == goal
@@ -54,7 +63,8 @@ with ManipulationClient() as client:
     trace["samples"][-1]["twist"][0]=.1
     finish(client,client.plan_mobile_task(navigation_trace=trace),"failed")
 print(json.dumps({"status":"passed","checks":["requested-15-joint-endpoints","collision-failure",
-    "external-URDF-limits","URDF-out-of-range-failure","cancel","timeout","stop-gate-failure"]}))
+    "object-motion-collision-failure","invalid-grasp-shape","external-URDF-limits",
+    "URDF-out-of-range-failure","cancel","timeout","stop-gate-failure"]}))
 '''
 
 
@@ -87,6 +97,7 @@ def main():
         if (customer/'community').exists():
             raise RuntimeError('Development directory leaked into customer kit')
         for name, command in [('example', [args.python, 'examples/mobile_dual_api.py']),
+                              ('dual-task-example', [args.python, 'examples/dual_task_api.py']),
                               ('negative-and-config-checks', [args.python, '-c', CHECK])]:
             run = subprocess.run(command, cwd=customer, env=env, capture_output=True, text=True, timeout=240)
             (candidate/(name+'.log')).write_text(run.stdout+run.stderr)
@@ -100,12 +111,17 @@ def main():
             raise RuntimeError('Plaintext core sources found: '+str(sources[:10]))
         report = json.loads((customer/'results/customer-api.json').read_text())
         plan = report['mobile_task']['result']
-        summary = dict(status='passed', version='0.2', package_revision='runtime.1',
+        dual = json.loads((customer/'results/dual-task-api.json').read_text())
+        assert dual['status'] == 'passed' and dual['dof'] == 15
+        summary = dict(status='passed', version='0.2', package_revision='runtime.2',
                        independent_source_directory=True, client_python=args.python,
                        validation_platform=__import__('platform').platform(),
                        checks=results, core_plaintext_files=0, dof=15,
                        base_final_pose=plan['navigation']['samples'][-1]['pose'],
                        phase_history=plan['phase_history'],
+                       dual_task=dict(samples=len(dual['positions_rad']),
+                                      metrics={k: v for k, v in dual.items() if k.startswith('max_')},
+                                      timed=dual['timed'], hardware_executed=dual['hardware_executed']),
                        elapsed_s=round(time.monotonic()-started, 2), hardware='not tested')
     (candidate/'VALIDATION.json').write_text(json.dumps(summary, indent=2)+'\n')
     print(json.dumps(summary))

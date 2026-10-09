@@ -3,12 +3,12 @@ import importlib
 import sys
 
 DEMOS = ('quick_start', 'ur3e_single_arm', 'grasping', 'motion_planning',
-         'dual_arm', 'mobile_dual_arm', 'integrated_task', 'mobile_dual_pitch', 'rm75_navigation')
+         'dual_arm', 'mobile_dual_arm', 'integrated_task', 'mobile_dual_pitch', 'rm75_navigation', 'dual_task_motion')
 
 
 def main():
     if sys.argv[1:] == ['--version']:
-        print('OmindOS Manipulation 0.2 runtime')
+        print('OmindOS Manipulation 0.2 runtime.2')
         return 0
     if len(sys.argv) >= 2 and sys.argv[1] == 'worker':
         if len(sys.argv) != 4:
