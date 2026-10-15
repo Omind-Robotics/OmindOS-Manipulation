@@ -32,6 +32,7 @@ jobs:
         if: always()
         with:
           name: community-simulation
+          retention-days: 30
           path: community-results/
   ros2-transport:
     needs: simulation
@@ -55,6 +56,7 @@ jobs:
         if: always()
         with:
           name: community-ros2
+          retention-days: 30
           path: |
             community-results/ros2/
             community-results/ros2-waist/
@@ -90,6 +92,7 @@ jobs:
         if: always()
         with:
           name: navigation-runtime
+          retention-days: 30
           path: community-results/navigation/
   mobile-integration:
     needs: [simulation, navigation-runtime]
@@ -113,6 +116,7 @@ jobs:
         if: always()
         with:
           name: mobile-integration
+          retention-days: 30
           path: community-results/navigation-integration*.json
   release-v02:
     # Historical publisher is retained only for its original repository.
