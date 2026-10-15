@@ -26,10 +26,22 @@ jobs:
         if: always()
         with:
           name: manipulation-0.2-customer-runtime-linux-amd64
+          retention-days: 7
           compression-level: 0
           path: |
             build/customer-candidate/manifest.json
             build/customer-candidate/VALIDATION.json
             build/customer-candidate/*.log
             build/customer-candidate/*.zip
+            build/customer-candidate/SHA256SUMS-Customer-Release
+      - name: Preserve validation evidence independently of the temporary package
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: manipulation-customer-runtime-evidence
+          retention-days: 30
+          path: |
+            build/customer-candidate/manifest.json
+            build/customer-candidate/VALIDATION.json
+            build/customer-candidate/*.log
             build/customer-candidate/SHA256SUMS-Customer-Release
